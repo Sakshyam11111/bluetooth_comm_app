@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "995276352471",
+    "project_id": "bluetoothcommapp",
+    "storage_bucket": "bluetoothcommapp.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:995276352471:android:2408e5315637259d467992",
+        "android_client_info": {
+          "package_name": "com.example.bluetooth_comm_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAYCuSfzyNwy7-KftcLo3GU21GuW7Be5yw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
