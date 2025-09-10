@@ -2,11 +2,12 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:hive/hive.dart';
 import 'package:uuid/uuid.dart';
-import '../models/chat_room.dart';
-import '../models/message.dart';
-import '../models/user.dart';
-import 'bluetooth_service.dart';
-import 'firebase_service.dart';
+import '../firebase/firebase_service.dart';
+import '../../models/chat_room.dart';
+import '../../models/message.dart';
+import '../../models/user.dart';
+import '../../services/bluetooth_service.dart';
+
 
 class ChatService extends ChangeNotifier {
   static const String CHAT_ROOMS_BOX = 'chat_rooms';
@@ -14,7 +15,7 @@ class ChatService extends ChangeNotifier {
   
   final BluetoothService _bluetoothService;
   final FirebaseService _firebaseService;
-  final Uuid _uuid = Uuid();
+  final Uuid _uuid = const Uuid();
   
   Box<ChatRoom>? _chatRoomsBox;
   Box<Message>? _messagesBox;

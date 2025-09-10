@@ -3,9 +3,8 @@ import 'package:flutter/foundation.dart';
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:hive/hive.dart';
 import 'package:uuid/uuid.dart';
-import '../bluetooth_service.dart';
-import '../models/call_record.dart';
-
+import '../../services/bluetooth_service.dart';
+import '../../models/call_record.dart';
 
 enum CallType { voice, video }
 enum CallStatus { connecting, connected, disconnected, failed, declined }
@@ -15,7 +14,7 @@ class CallService extends ChangeNotifier {
   static const String AGORA_APP_ID = 'your_agora_app_id_here'; // Replace with your Agora App ID
   
   final BluetoothService _bluetoothService;
-  final Uuid _uuid = Uuid();
+  final Uuid _uuid = const Uuid();
   
   RtcEngine? _engine;
   Box<CallRecord>? _callRecordsBox;

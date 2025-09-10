@@ -3,7 +3,7 @@ import 'package:hive/hive.dart';
 import 'user.dart';
 import 'message.dart';
 
-part 'chat_room.g.dart';
+// part 'chat_room.g.dart';
 
 enum ChatRoomType { direct, group }
 

@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../services/bluetooth_service.dart';
 import '../firebase/auth_service.dart';
-import '../services/bluetooth_service.dart';
-import '../services/auth_service.dart';
-import '../services/chat_service.dart';
-import 'chat/chat_list_screen.dart';
-import 'bluetooth/bluetooth_devices_screen.dart';
-import 'groups/groups_screen.dart';
-import 'calls/call_history_screen.dart';
-import 'profile/profile_screen.dart';
+import '../../services/bluetooth_service.dart';
+
+import '../../services/chat_service.dart';
+import '../../pages/chat/chat_list_screen.dart';
+import '../../pages/bluetooth/bluetooth_devices_screen.dart';
+import '../../pages/groups/groups_screen.dart';
+import '../../pages/calls/call_history_screen.dart';
+import '../../pages/profile/profile_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -236,17 +235,17 @@ class _HomeScreenState extends State<HomeScreen> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Create New Group'),
-        content: Column(
+        content: const Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             TextField(
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: 'Group Name',
                 hintText: 'Enter group name',
               ),
             ),
-            const SizedBox(height: 16),
-            const Text('Select members from connected devices'),
+            SizedBox(height: 16),
+            Text('Select members from connected devices'),
           ],
         ),
         actions: [

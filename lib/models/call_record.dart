@@ -1,7 +1,7 @@
 // models/call_record.dart
 import 'package:hive/hive.dart';
 
-part '../pages/call_record.g.dart';
+// part '../pages/call_record.g.dart';
 
 @HiveType(typeId: 3)
 class CallRecord extends HiveObject {

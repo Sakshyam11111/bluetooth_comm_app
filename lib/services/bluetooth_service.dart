@@ -61,7 +61,7 @@ class BluetoothService extends ChangeNotifier {
     try {
       await Nearby().startAdvertising(
         userName,
-        STRATEGY,
+        STRATEGY as Strategy,
         onConnectionInitiated: _onConnectionInitiated,
         onConnectionResult: _onConnectionResult,
         onDisconnected: _onDisconnected,
@@ -81,7 +81,7 @@ class BluetoothService extends ChangeNotifier {
     try {
       await Nearby().startDiscovery(
         userName,
-        STRATEGY,
+        STRATEGY as Strategy,
         onEndpointFound: _onEndpointFound,
         onEndpointLost: _onEndpointLost,
         serviceId: SERVICE_ID,
@@ -234,8 +234,8 @@ class BluetoothService extends ChangeNotifier {
     // Auto-accept connection (you might want to show a dialog to user)
     Nearby().acceptConnection(
       endpointId,
-      onPayloadReceived: _onPayloadReceived,
-      onPayloadTransferUpdate: _onPayloadTransferUpdate,
+      onPayLoadRecieved: _onPayloadReceived,
+      onPayloadTransferUpdate: _onPayloadTransferUpdate, onPayLoadRecieved: (String endpointId, Payload payload) {  },
     );
   }
 

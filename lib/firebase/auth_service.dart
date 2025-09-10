@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:hive/hive.dart';
-import '../models/user.dart';
+import '../../models/user.dart';
 import 'firebase_service.dart';
 
 class AuthService extends ChangeNotifier {
@@ -290,7 +290,7 @@ class AuthService extends ChangeNotifier {
   }
 
   bool _isValidEmail(String email) {
-    return RegExp(r'^[^@]+@[^@]+\.[^@]+).hasMatch(email);
+    return RegExp(r'^[^@]+@[^@]+\.[^@]+$').hasMatch(email);
   }
 
   // Check if user is guest

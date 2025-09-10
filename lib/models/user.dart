@@ -1,7 +1,6 @@
-// models/user.dart
 import 'package:hive/hive.dart';
 
-part 'user.g.dart';
+// part 'user.g.dart';
 
 @HiveType(typeId: 0)
 class User extends HiveObject {
@@ -56,6 +55,3 @@ class User extends HiveObject {
     bluetoothAddress: json['bluetoothAddress'],
   );
 }
-
-
-

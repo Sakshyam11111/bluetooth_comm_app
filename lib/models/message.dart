@@ -1,7 +1,7 @@
 // models/message.dart
 import 'package:hive/hive.dart';
 
-part 'message.g.dart';
+// part 'message.g.dart';
 
 enum MessageType { text, image, file, audio, video }
 enum MessageStatus { sending, sent, delivered, read, failed }

@@ -4,9 +4,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
-import '../models/user.dart' as app_user;
-import '../models/message.dart';
-import '../models/chat_room.dart';
+import '../../models/user.dart' as app_user;
+import '../../models/message.dart';
+import '../../models/chat_room.dart';
 
 class FirebaseService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
