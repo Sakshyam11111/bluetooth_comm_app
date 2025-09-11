@@ -4,31 +4,31 @@ import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'package:nearby_connections/nearby_connections.dart';
-import 'package:crypto/crypto.dart';
 import '../models/bluetooth_device.dart';
 import '../models/message.dart';
 
 class BluetoothService extends ChangeNotifier {
   static const String SERVICE_ID = 'com.bluetoothcomm.app';
-  static const String STRATEGY = Strategy.P2P_CLUSTER;
-  
+  static const Strategy STRATEGY = Strategy.P2P_CLUSTER;
+
   final FlutterBluetoothSerial _bluetooth = FlutterBluetoothSerial.instance;
   BluetoothConnection? _connection;
-  
+
   bool _isConnectedToClassic = false;
   bool _isAdvertising = false;
   bool _isDiscovering = false;
   bool _isConnectedToNearby = false;
-  
+
   final List<BluetoothDiscoveryResult> _classicDevices = [];
   final List<BluetoothDeviceModel> _nearbyDevices = [];
   final List<String> _connectedDeviceIds = [];
-  
+
   StreamSubscription<BluetoothDiscoveryResult>? _discoverySubscription;
   StreamSubscription<Uint8List>? _dataSubscription;
-  
+
   // Getters
-  bool get isBluetoothEnabled => _bluetooth.isEnabled ?? false;
+  Future<bool> get isBluetoothEnabled async => await _bluetooth.isEnabled ?? false;
+
   bool get isConnected => _isConnectedToClassic || _isConnectedToNearby;
   bool get isAdvertising => _isAdvertising;
   bool get isDiscovering => _isDiscovering;
@@ -37,11 +37,7 @@ class BluetoothService extends ChangeNotifier {
   List<String> get connectedDeviceIds => _connectedDeviceIds;
 
   BluetoothService() {
-    _initializeNearbyConnections();
-  }
-
-  Future<void> _initializeNearbyConnections() async {
-    await Nearby().initialize();
+    // Initialization is not required if the method does not exist
   }
 
   // Enable Bluetooth
@@ -61,7 +57,7 @@ class BluetoothService extends ChangeNotifier {
     try {
       await Nearby().startAdvertising(
         userName,
-        STRATEGY as Strategy,
+        STRATEGY,
         onConnectionInitiated: _onConnectionInitiated,
         onConnectionResult: _onConnectionResult,
         onDisconnected: _onDisconnected,
@@ -81,7 +77,7 @@ class BluetoothService extends ChangeNotifier {
     try {
       await Nearby().startDiscovery(
         userName,
-        STRATEGY as Strategy,
+        STRATEGY,
         onEndpointFound: _onEndpointFound,
         onEndpointLost: _onEndpointLost,
         serviceId: SERVICE_ID,
@@ -100,13 +96,13 @@ class BluetoothService extends ChangeNotifier {
     try {
       _classicDevices.clear();
       _discoverySubscription?.cancel();
-      
+
       _discoverySubscription = _bluetooth.startDiscovery().listen(
         (result) {
           final existingIndex = _classicDevices.indexWhere(
             (device) => device.device.address == result.device.address,
           );
-          
+
           if (existingIndex >= 0) {
             _classicDevices[existingIndex] = result;
           } else {
@@ -115,7 +111,7 @@ class BluetoothService extends ChangeNotifier {
           notifyListeners();
         },
       );
-      
+
       _discoverySubscription!.onDone(() {
         _isDiscovering = false;
         notifyListeners();
@@ -130,14 +126,14 @@ class BluetoothService extends ChangeNotifier {
     try {
       _connection = await BluetoothConnection.toAddress(device.address);
       _isConnectedToClassic = true;
-      
+
       _dataSubscription = _connection!.input!.listen(
         _onDataReceived,
         onDone: () {
           _disconnect();
         },
       );
-      
+
       notifyListeners();
       return true;
     } catch (e) {
@@ -166,20 +162,20 @@ class BluetoothService extends ChangeNotifier {
     try {
       final messageJson = jsonEncode(message.toJson());
       final messageBytes = utf8.encode(messageJson);
-      
+
       if (_isConnectedToClassic && _connection != null) {
         _connection!.output.add(messageBytes);
         await _connection!.output.allSent;
         return true;
       }
-      
+
       if (_isConnectedToNearby && _connectedDeviceIds.isNotEmpty) {
         for (String deviceId in _connectedDeviceIds) {
           await Nearby().sendBytesPayload(deviceId, messageBytes);
         }
         return true;
       }
-      
+
       return false;
     } catch (e) {
       debugPrint('Error sending message: $e');
@@ -192,12 +188,12 @@ class BluetoothService extends ChangeNotifier {
     try {
       final messageJson = jsonEncode(message.toJson());
       final messageBytes = utf8.encode(messageJson);
-      
+
       // Send to all nearby connected devices
       for (String deviceId in _connectedDeviceIds) {
         await Nearby().sendBytesPayload(deviceId, messageBytes);
       }
-      
+
       // Send to classic connection if available
       if (_isConnectedToClassic && _connection != null) {
         _connection!.output.add(messageBytes);
@@ -215,7 +211,7 @@ class BluetoothService extends ChangeNotifier {
       name: endpointName,
       isConnected: false,
     );
-    
+
     final existingIndex = _nearbyDevices.indexWhere((d) => d.id == endpointId);
     if (existingIndex >= 0) {
       _nearbyDevices[existingIndex] = device;
@@ -225,17 +221,18 @@ class BluetoothService extends ChangeNotifier {
     notifyListeners();
   }
 
-  void _onEndpointLost(String endpointId) {
-    _nearbyDevices.removeWhere((device) => device.id == endpointId);
-    notifyListeners();
+  void _onEndpointLost(String? endpointId) {
+    if (endpointId != null) {
+      _nearbyDevices.removeWhere((device) => device.id == endpointId);
+      notifyListeners();
+    }
   }
 
   void _onConnectionInitiated(String endpointId, ConnectionInfo connectionInfo) {
-    // Auto-accept connection (you might want to show a dialog to user)
     Nearby().acceptConnection(
       endpointId,
       onPayLoadRecieved: _onPayloadReceived,
-      onPayloadTransferUpdate: _onPayloadTransferUpdate, onPayLoadRecieved: (String endpointId, Payload payload) {  },
+      onPayloadTransferUpdate: _onPayloadTransferUpdate,
     );
   }
 
@@ -243,7 +240,7 @@ class BluetoothService extends ChangeNotifier {
     if (status == Status.CONNECTED) {
       _connectedDeviceIds.add(endpointId);
       _isConnectedToNearby = true;
-      
+
       // Update device status
       final deviceIndex = _nearbyDevices.indexWhere((d) => d.id == endpointId);
       if (deviceIndex >= 0) {
@@ -263,13 +260,13 @@ class BluetoothService extends ChangeNotifier {
     if (_connectedDeviceIds.isEmpty) {
       _isConnectedToNearby = false;
     }
-    
+
     // Update device status
     final deviceIndex = _nearbyDevices.indexWhere((d) => d.id == endpointId);
     if (deviceIndex >= 0) {
       _nearbyDevices[deviceIndex] = _nearbyDevices[deviceIndex].copyWith(isConnected: false);
     }
-    
+
     notifyListeners();
   }
 
@@ -289,9 +286,7 @@ class BluetoothService extends ChangeNotifier {
       final messageString = utf8.decode(data);
       final messageJson = jsonDecode(messageString);
       final message = Message.fromJson(messageJson);
-      
-      // Notify listeners about new message
-      // You'll need to implement this in your chat service
+
       debugPrint('Received message: ${message.content}');
     } catch (e) {
       debugPrint('Error processing received data: $e');
@@ -309,13 +304,13 @@ class BluetoothService extends ChangeNotifier {
     _connection?.close();
     _connection = null;
     _isConnectedToClassic = false;
-    
+
     for (String deviceId in _connectedDeviceIds) {
       await Nearby().disconnectFromEndpoint(deviceId);
     }
     _connectedDeviceIds.clear();
     _isConnectedToNearby = false;
-    
+
     notifyListeners();
   }
 

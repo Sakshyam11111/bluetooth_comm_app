@@ -144,9 +144,9 @@ class CallService extends ChangeNotifier {
       await _engine!.enableAudio();
       await _engine!.disableVideo();
       
-      // Join channel
+      // Join channel with a placeholder token
       await _engine!.joinChannel(
-        token: null, // Use null for testing, implement token generation for production
+        token: 'Your_Token_Here', // Replace with actual token or a placeholder
         channelId: channelName,
         uid: 0, // Let Agora assign UID
         options: const ChannelMediaOptions(),
@@ -202,9 +202,9 @@ class CallService extends ChangeNotifier {
       await _engine!.enableAudio();
       await _engine!.enableVideo();
       
-      // Join channel
+      // Join channel with a placeholder token
       await _engine!.joinChannel(
-        token: null, // Use null for testing, implement token generation for production
+        token: 'Your_Token_Here', // Replace with actual token or a placeholder
         channelId: channelName,
         uid: 0, // Let Agora assign UID
         options: const ChannelMediaOptions(),
@@ -243,8 +243,9 @@ class CallService extends ChangeNotifier {
         await _engine!.enableVideo();
       }
       
+      // Join channel with a placeholder token
       await _engine!.joinChannel(
-        token: null,
+        token: 'Your_Token_Here', // Replace with actual token or a placeholder
         channelId: channelName,
         uid: 0,
         options: const ChannelMediaOptions(),

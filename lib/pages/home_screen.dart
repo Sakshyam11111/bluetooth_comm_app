@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../firebase/auth_service.dart';
 import '../../services/bluetooth_service.dart';
-
 import '../../services/chat_service.dart';
 import '../../pages/chat/chat_list_screen.dart';
 import '../../pages/bluetooth/bluetooth_devices_screen.dart';
@@ -34,12 +33,12 @@ class _HomeScreenState extends State<HomeScreen> {
     _initializeServices();
   }
 
-  void _initializeServices() async {
+  Future<void> _initializeServices() async {
     final bluetoothService = Provider.of<BluetoothService>(context, listen: false);
     final authService = Provider.of<AuthService>(context, listen: false);
     
     // Check if Bluetooth is enabled
-    if (!bluetoothService.isBluetoothEnabled) {
+    if (!(await bluetoothService.isBluetoothEnabled)) {
       await bluetoothService.enableBluetooth();
     }
     

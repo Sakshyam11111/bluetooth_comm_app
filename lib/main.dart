@@ -1,3 +1,4 @@
+// main.dart
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
@@ -32,12 +33,12 @@ void main() async {
   await Hive.initFlutter();
   
   // Register Hive adapters
-  Hive.registerAdapter(UserAdapter());
-  Hive.registerAdapter(MessageAdapter());
-  Hive.registerAdapter(ChatRoomAdapter());
-  Hive.registerAdapter(CallRecordAdapter());
+  Hive.registerAdapter(UserAdapter() as TypeAdapter);
+  Hive.registerAdapter(MessageAdapter() as TypeAdapter);
+  Hive.registerAdapter(ChatRoomAdapter() as TypeAdapter);
+  Hive.registerAdapter(CallRecordAdapter() as TypeAdapter);
 
-  // Initialize Firebase (only once)
+  // Initialize Firebase
   await Firebase.initializeApp(
     options: const FirebaseOptions(
       apiKey: "AIzaSyA4M54igk8VeQQf4RSns1R8op9Jxu_mAiU",
@@ -54,6 +55,18 @@ void main() async {
   await _requestPermissions();
 
   runApp(const BluetoothCommApp());
+}
+
+class ChatRoomAdapter {
+}
+
+class CallRecordAdapter {
+}
+
+class MessageAdapter {
+}
+
+class UserAdapter {
 }
 
 Future<void> _requestPermissions() async {
@@ -77,17 +90,12 @@ class BluetoothCommApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        // Firebase service (no constructor parameters)
         Provider<FirebaseService>(
           create: (_) => FirebaseService(),
         ),
-        
-        // Bluetooth service (no constructor parameters)
         ChangeNotifierProvider<BluetoothService>(
           create: (_) => BluetoothService(),
         ),
-        
-        // Auth service (requires FirebaseService)
         ChangeNotifierProxyProvider<FirebaseService, AuthService>(
           create: (context) => AuthService(
             Provider.of<FirebaseService>(context, listen: false),
@@ -95,8 +103,6 @@ class BluetoothCommApp extends StatelessWidget {
           update: (context, firebaseService, previous) =>
               previous ?? AuthService(firebaseService),
         ),
-        
-        // Chat service (requires BluetoothService and FirebaseService)
         ChangeNotifierProxyProvider2<BluetoothService, FirebaseService, ChatService>(
           create: (context) => ChatService(
             Provider.of<BluetoothService>(context, listen: false),
@@ -105,8 +111,6 @@ class BluetoothCommApp extends StatelessWidget {
           update: (context, bluetoothService, firebaseService, previous) =>
               previous ?? ChatService(bluetoothService, firebaseService),
         ),
-        
-        // Call service (requires BluetoothService)
         ChangeNotifierProxyProvider<BluetoothService, CallService>(
           create: (context) => CallService(
             Provider.of<BluetoothService>(context, listen: false),
