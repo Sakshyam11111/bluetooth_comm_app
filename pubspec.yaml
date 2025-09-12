@@ -42,7 +42,7 @@ dependencies:
   uuid: ^4.2.1
 
   # Audio/Video calling
-  agora_rtc_engine: ^6.3.0
+  agora_rtc_engine: ^6.5.2
 
   # File handling
   file_picker: ^6.1.1
